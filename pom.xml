@@ -55,12 +55,12 @@
             <Export-Package>org.osgi.framework;-split-package:=merge-first,org.osgi.service.packageadmin,org.osgi.service.url,org.osgi.service.startlevel,org.osgi.util.tracker</Export-Package>
             <Private-Package>org.apache.felix.moduleloader.*,org.apache.felix.framework.*</Private-Package>
             <Import-Package>!*</Import-Package>
-            <Include-Resource>{src/main/resources/},org/osgi/framework/=target/classes/org/osgi/framework/</Include-Resource> 
+            <Include-Resource>META-INF/LICENSE=LICENSE,META-INF/NOTICE=NOTICE,{src/main/resources/},org/osgi/framework/=target/classes/org/osgi/framework/</Include-Resource> 
           </instructions>
         </configuration>
       </plugin>
     </plugins>
-  </build>  
+  </build>
 
   <scm>
     <connection>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.framework-1.0.4</connection>
