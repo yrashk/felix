@@ -60,7 +60,7 @@ public class ProvidedServiceHandler extends CompositeHandler implements Dependen
      * External context.
      */
     private BundleContext m_context;
-
+    
     /**
      * List of "available" services in the internal context.
      */
