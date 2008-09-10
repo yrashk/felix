@@ -67,12 +67,6 @@
                         <Import-Package>
                             org.osgi.service.log;resolution:=optional,* 
                         </Import-Package>
-                        <Import-Service>
-                            org.apache.felix.shell.ShellService
-                        </Import-Service>
-                        <Import-Service>
-                            org.osgi.service.log.LogService
-                        </Import-Service>
                     </instructions>
                 </configuration>
             </plugin>
