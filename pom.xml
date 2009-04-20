@@ -108,8 +108,11 @@
                 <id>make-assembly</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>attached</goal>
+                  <goal>single</goal>
                 </goals>
+                <configuration>
+                  <attach>false</attach>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -289,6 +292,7 @@
         <configuration>
           <tagBase>https://svn.apache.org/repos/asf/felix/releases</tagBase>
           <useReleaseProfile>false</useReleaseProfile>
+          <arguments>-Prelease</arguments> 
           <goals>deploy</goals>
         </configuration>
       </plugin>
