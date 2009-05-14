@@ -16,8 +16,7 @@
  specific language governing permissions and limitations
  under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.apache.felix</groupId>
     <artifactId>felix</artifactId>
@@ -29,7 +28,7 @@
   <groupId>org.apache.felix</groupId>
   <name>Apache Felix UPnP Extra </name>
   <artifactId>org.apache.felix.upnp.extra</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.4.0</version>
   <!-- <url>http://maven.apache.org</url> -->
   <dependencies>
     <dependency>
@@ -62,4 +61,10 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.upnp.extra-0.4.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.upnp.extra-0.4.0</developerConnection>
+    <url>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.upnp.extra-0.4.0</url>
+  </scm>
 </project>
