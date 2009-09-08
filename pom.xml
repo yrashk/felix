@@ -43,6 +43,12 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.framework</artifactId>
+                <version>1.8.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.core</artifactId>
                 <version>1.2.0</version>
                 <scope>provided</scope>
@@ -88,6 +94,12 @@
                         <preparationGoals>clean verify install</preparationGoals>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>1.4.3</version>
+                    <extensions>true</extensions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -97,6 +109,27 @@
                     <source>1.5</source>
                     <target>1.5</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                            </resourceBundles>
+                            <properties>
+                                <addLicense>true</addLicense>
+                                <addArtifact>true</addArtifact>
+                                <projectName>Apache Felix</projectName>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
