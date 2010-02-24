@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.felix.karaf.jaas</groupId>
         <artifactId>jaas</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.4.0</version>
     </parent>
 
     <groupId>org.apache.felix.karaf.jaas</groupId>
     <artifactId>org.apache.felix.karaf.jaas.config</artifactId>
     <packaging>bundle</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     <name>Apache Felix Karaf :: JAAS Config</name>
 
     <description>
@@ -60,8 +60,8 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint</artifactId>
+            <groupId>org.apache.geronimo.blueprint</groupId>
+            <artifactId>geronimo-blueprint</artifactId>
         </dependency>
     </dependencies>
 

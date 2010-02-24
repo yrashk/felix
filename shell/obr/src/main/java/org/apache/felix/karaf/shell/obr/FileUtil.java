@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.felix.karaf.shell.obr.util;
+package org.apache.felix.karaf.shell.obr;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
