@@ -71,6 +71,7 @@
                     <include>LICENSE*</include>
                     <include>NOTICE*</include>
                     <include>DEPENDENCIES*</include>
+                    <include>*.txt</include>
                 </includes>
             </resource>
         </resources>
