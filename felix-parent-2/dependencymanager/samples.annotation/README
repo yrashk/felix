@@ -1,0 +1,85 @@
+This sample illustrates the usage of the new DependencyManager annotations.
+
+Sample description:
+
+  This sample shows a basic "SpellChecker" application which provides a Felix "spellcheck" GOGO shell
+  command. The GOGO "spellcheck" command accepts a string as parameter, which is checked for proper 
+  existence. The SpellChecker class has a required/multiple (1..N) dependency over every available 
+  "DictionaryService" services, which are internally used by the SpellChecker command, when checking 
+  word existence.
+  
+  A DictionaryService is defined using a FactoryConfigurationAdapterService annotation, allowing to
+  instantiate many "DictionaryService" instances from webconsole. This annotation actually
+  registers a ManagedServiceFactory into the Registry, and you can specify some meta type
+  informations in the annotation, allowing to configure the DictionaryService words and language from 
+  WebConsole. 
+  Each time you instantiate a factory configuration whose factory pid equals "Dictionary Services", 
+  then a corresponding "DictionaryService" service is instantiated and is then injected
+  into the SpellChecker service. So, before testing, you first have to go to webconsole
+  Configuration panel, and specify some dictionaries (see the "Dictionary Services" Factory PID).  
+  Then, go to the felix GOGO shell, and you will then see the "spellcheck" command (when typing
+  "help"). 
+  
+  Notice that in the sample, you will also find a DictionaryAspect Service (DictionaryAspect.java), which
+  decorates the EnglishDictionary service, by adding some additional words to it. 
+  
+How to test:
+
+  - Install the following bundles (with same or higher version):
+
+     org.apache.felix.configadmin-1.2.8.jar
+     org.apache.felix.metatype-1.0.4.jar
+     org.apache.felix.http.jetty-2.2.0.jar
+     org.apache.felix.log-1.0.0.jar (optional)
+     org.apache.felix.webconsole-3.1.8.jar
+     org.apache.felix.shell-1.4.2.jar
+
+  - compile dependency manager from trunk:
+
+     svn checkout http://svn.apache.org/repos/asf/felix/trunk/dependencymanager dependencymanager
+     cd dependencymanager
+     mvn -Dpackaging=plugins -Dmaven.test.skip=true install
+
+  - install the DM bundles into the fwk 
+
+     dependencymanager/core/target/org.apache.felix.dependencymanager-3.0.0-SNAPSHOT.jar
+     dependencymanager/shell/target/org.apache.felix.dependencymanager.shell-3.0.0-SNAPSHOT.jar
+     dependencymanager/runtime/target/org.apache.felix.dependencymanager.runtime-3.0.0-SNAPSHOT.jar
+     dependencymanager/samples.annotation/target/org.apache.felix.dependencymanager.samples.annotation-3.0.0-SNAPSHOT.jar
+
+  - Start felix
+
+    At this point, you should have the following running bundles:
+
+    g! lb
+    START LEVEL 1
+       ID|State      |Level|Name
+        0|Active     |    0|System Bundle (3.0.8)
+        1|Active     |    1|Apache Felix Bundle Repository (1.6.2)
+        2|Active     |    1|Apache Felix Configuration Admin Service (1.2.8)
+        7|Active     |    1|Apache Felix Gogo Command (0.8.0)
+        8|Active     |    1|Apache Felix Gogo Runtime (0.8.0)
+        9|Active     |    1|Apache Felix Gogo Shell (0.8.0)
+       10|Active     |    1|Apache Felix Http Jetty (2.2.0)
+       11|Active     |    1|Apache Felix Log Service (1.0.0)
+       12|Active     |    1|Apache Felix Metatype Service (1.0.4)
+       13|Active     |    1|Apache Felix Web Management Console (3.1.8)
+       14|Active     |    1|Apache Felix Dependency Manager (3.0.0.SNAPSHOT)
+       16|Active     |    1|Apache Felix Dependency Manager Runtime (3.0.0.SNAPSHOT)
+       17|Active     |    1|Apache Felix Dependency Manager Shell (3.0.0.SNAPSHOT)
+       18|Active     |    1|Apache Felix Dependency Manager Annotation Sample (3.0.0.SNAPSHOT)
+
+  - Go to web console: in the Configuration panel, edit the "Dictionary Services"
+     Configuration, add some dictionaries. By default, an English dictionary is displayed. Just 
+     click on "save", *then click on your refresh web browser*: you will see a new dictionary service
+     instance. At this point, a DictionaryService service will be enabled (with the service property "lang=en"),  
+     and the SpellCheck component will be injected with it. Then you should see the "spellcheck"
+     command, when typing  "help" on the gogo shell.
+
+  - Just type "spellcheck hello", and the command should reply a fantastic message, like "word hello is correct".
+  
+  - You can also click on the "Aspect Dictionary" button, in order to decorate the english dictionary with some 
+     custom words.
+     By default, the "aspect" word is pre configured, but you can click on the "+" button in order to add more words. 
+     Then click on Save. At this point, the English DictionaryService will be decorated with the aspect service.
+     So, now, if you type "spellcheck aspect", then the message: "word aspect is correct" should be displayed. 
