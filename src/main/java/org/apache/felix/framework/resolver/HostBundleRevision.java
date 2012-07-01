@@ -19,8 +19,8 @@
 package org.apache.felix.framework.resolver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import org.apache.felix.framework.util.ImmutableList;
 import org.apache.felix.framework.wiring.BundleCapabilityImpl;
 import org.apache.felix.framework.wiring.BundleRequirementImpl;
 import org.osgi.framework.Bundle;
@@ -29,17 +29,15 @@ import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWiring;
-import org.osgi.resource.Capability;
-import org.osgi.resource.Requirement;
 
-class WrappedRevision implements BundleRevision
+class HostBundleRevision implements BundleRevision
 {
     private final BundleRevision m_host;
     private final List<BundleRevision> m_fragments;
     private List<BundleCapability> m_cachedCapabilities = null;
     private List<BundleRequirement> m_cachedRequirements = null;
 
-    public WrappedRevision(BundleRevision host, List<BundleRevision> fragments)
+    public HostBundleRevision(BundleRevision host, List<BundleRevision> fragments)
     {
         m_host = host;
         m_fragments = fragments;
@@ -65,16 +63,6 @@ class WrappedRevision implements BundleRevision
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<Capability> getCapabilities(String namespace)
-    {
-        return asCapabilityList(getDeclaredCapabilities(namespace));
-    }
-
-    private static List<Capability> asCapabilityList(List caps)
-    {
-        return (List<Capability>) caps;
-    }
-
     public List<BundleCapability> getDeclaredCapabilities(String namespace)
     {
         if (m_cachedCapabilities == null)
@@ -84,7 +72,7 @@ class WrappedRevision implements BundleRevision
             // Wrap host capabilities.
             for (BundleCapability cap : m_host.getDeclaredCapabilities(null))
             {
-                caps.add(new WrappedCapability(this, (BundleCapabilityImpl) cap));
+                caps.add(new HostedCapability(this, (BundleCapabilityImpl) cap));
             }
 
             // Wrap fragment capabilities.
@@ -96,23 +84,13 @@ class WrappedRevision implements BundleRevision
                     {
 // TODO: OSGi R4.4 - OSGi R4.4 may introduce an identity capability, if so
 //       that will need to be excluded from here.
-                        caps.add(new WrappedCapability(this, (BundleCapabilityImpl) cap));
+                        caps.add(new HostedCapability(this, (BundleCapabilityImpl) cap));
                     }
                 }
             }
-            m_cachedCapabilities = ImmutableList.newInstance(caps);
+            m_cachedCapabilities = Collections.unmodifiableList(caps);
         }
         return m_cachedCapabilities;
-    }
-
-    public List<Requirement> getRequirements(String namespace)
-    {
-        return asRequirementList(getDeclaredRequirements(namespace));
-    }
-
-    private static List<Requirement> asRequirementList(List reqs)
-    {
-        return (List<Requirement>) reqs;
     }
 
     public List<BundleRequirement> getDeclaredRequirements(String namespace)
@@ -124,7 +102,7 @@ class WrappedRevision implements BundleRevision
             // Wrap host requirements.
             for (BundleRequirement req : m_host.getDeclaredRequirements(null))
             {
-                reqs.add(new WrappedRequirement(this, (BundleRequirementImpl) req));
+                reqs.add(new HostedRequirement(this, (BundleRequirementImpl) req));
             }
 
             // Wrap fragment requirements.
@@ -136,12 +114,12 @@ class WrappedRevision implements BundleRevision
                     {
                         if (!req.getNamespace().equals(BundleRevision.HOST_NAMESPACE))
                         {
-                            reqs.add(new WrappedRequirement(this, (BundleRequirementImpl) req));
+                            reqs.add(new HostedRequirement(this, (BundleRequirementImpl) req));
                         }
                     }
                 }
             }
-            m_cachedRequirements = ImmutableList.newInstance(reqs);
+            m_cachedRequirements = Collections.unmodifiableList(reqs);
         }
         return m_cachedRequirements;
     }
@@ -161,7 +139,6 @@ class WrappedRevision implements BundleRevision
         return m_host.getBundle();
     }
 
-    @Override
     public String toString()
     {
         return m_host.toString();

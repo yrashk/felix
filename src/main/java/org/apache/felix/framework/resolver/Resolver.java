@@ -28,7 +28,21 @@ import org.osgi.framework.wiring.BundleRevision;
 
 public interface Resolver
 {
-    Map<BundleRevision, List<ResolverWire>> resolve(ResolveContext rc);
     Map<BundleRevision, List<ResolverWire>> resolve(
-        ResolveContext rc, BundleRevision revision, String pkgName);
+        ResolverState state,
+        Set<BundleRevision> mandatoryRevisions,
+        Set<BundleRevision> optionalRevisions,
+        Set<BundleRevision> ondemandFragments);
+    Map<BundleRevision, List<ResolverWire>> resolve(
+        ResolverState state, BundleRevision revision, String pkgName,
+        Set<BundleRevision> ondemandFragments);
+
+    public static interface ResolverState
+    {
+        boolean isEffective(BundleRequirement req);
+        SortedSet<BundleCapability> getCandidates(
+            BundleRequirement req, boolean obeyMandatory);
+        void checkExecutionEnvironment(BundleRevision revision) throws ResolveException;
+        void checkNativeLibraries(BundleRevision revision) throws ResolveException;
+    }
 }

@@ -27,141 +27,108 @@ import java.util.*;
  * map will be converted to a <tt>String</tt> using the
  * <tt>toString()</tt> method, since it is only intended to
  * compare strings.
- **/
-public class StringMap extends AbstractMap<String, Object>
+**/
+public class StringMap implements Map
 {
-    private final TreeMap<String, KeyValueEntry> m_map = new TreeMap<String, KeyValueEntry>();
+    private TreeMap m_map;
+
+    public StringMap()
+    {
+        this(true);
+    }
 
     public StringMap(boolean caseSensitive)
     {
+        m_map = new TreeMap(new StringComparator(caseSensitive));
     }
 
     public StringMap(Map map, boolean caseSensitive)
     {
+        this(caseSensitive);
         putAll(map);
     }
 
-    @Override
+    public boolean isCaseSensitive()
+    {
+        return ((StringComparator) m_map.comparator()).isCaseSensitive();
+    }
+
+    public void setCaseSensitive(boolean b)
+    {
+        if (isCaseSensitive() != b)
+        {
+            TreeMap map = new TreeMap(new StringComparator(b));
+            map.putAll(m_map);
+            m_map = map;
+        }
+    }
+
     public int size()
     {
         return m_map.size();
     }
 
-    @Override
     public boolean isEmpty()
     {
         return m_map.isEmpty();
     }
 
-    @Override
     public boolean containsKey(Object arg0)
     {
-        return m_map.containsKey(arg0.toString().toUpperCase());
+        return m_map.containsKey(arg0);
     }
 
-    @Override
     public boolean containsValue(Object arg0)
     {
         return m_map.containsValue(arg0);
     }
 
-    @Override
     public Object get(Object arg0)
     {
-        KeyValueEntry kve = m_map.get(arg0.toString().toUpperCase());
-        return (kve != null) ? kve.value : null;
+        return m_map.get(arg0);
     }
 
-    @Override
-    public Object put(String key, Object value)
+    public Object put(Object key, Object value)
     {
-        KeyValueEntry kve = (KeyValueEntry) m_map.put(key.toUpperCase(), new KeyValueEntry(key, value));
-        return (kve != null) ? kve.value : null;
+        return m_map.put(key.toString(), value);
     }
 
-    @Override
-    public void putAll(Map<? extends String, ? extends Object> map)
+    public void putAll(Map map)
     {
-        for (Map.Entry<? extends String, ? extends Object> e : map.entrySet())
+        for (Iterator it = map.entrySet().iterator(); it.hasNext(); )
         {
-            put(e.getKey(), e.getValue());
+            Map.Entry entry = (Map.Entry) it.next();
+            put(entry.getKey(), entry.getValue());
         }
     }
 
-    @Override
     public Object remove(Object arg0)
     {
-        KeyValueEntry kve = m_map.remove(arg0.toString().toUpperCase());
-        return (kve != null) ? kve.value : null;
+        return m_map.remove(arg0);
     }
 
-    @Override
     public void clear()
     {
         m_map.clear();
     }
 
-    public Set<Entry<String, Object>> entrySet()
+    public Set keySet()
     {
-        return new AbstractSet<Entry<String, Object>>()
-        {
-            @Override
-            public Iterator<Entry<String, Object>> iterator()
-            {
-                return new Iterator<Entry<String, Object>>()
-                {
-                    Iterator<Entry<String, KeyValueEntry>> it = m_map.entrySet().iterator();
-
-                    public boolean hasNext()
-                    {
-                        return it.hasNext();
-                    }
-
-                    public Entry<String, Object> next()
-                    {
-                        return it.next().getValue();
-                    }
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-
-            @Override
-            public int size()
-            {
-                return m_map.size();
-            }
-        };
+        return m_map.keySet();
     }
 
-    private class KeyValueEntry implements Entry<String, Object>
+    public Collection values()
     {
-        private KeyValueEntry(String key, Object value)
-        {
-            this.key = key;
-            this.value = value;
-        }
+        return m_map.values();
+    }
 
-        public String getKey()
-        {
-            return key;
-        }
+    public Set entrySet()
+    {
+        return m_map.entrySet();
+    }
 
-        public Object getValue()
-        {
-            return value;
-        }
-
-        public Object setValue(Object value)
-        {
-            Object v = this.value;
-            this.value = value;
-            return v;
-        }
-        String key;
-        Object value;
+    public String toString()
+    {
+        return m_map.toString();
     }
 }

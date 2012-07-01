@@ -156,8 +156,7 @@ public class PackageAdminImpl implements PackageAdmin
     **/
     public ExportedPackage[] getExportedPackages(Bundle bundle)
     {
-        ExportedPackage[] pkgs = m_felix.getExportedPackages(bundle);
-        return ((pkgs == null) || pkgs.length == 0) ? null : pkgs;
+        return m_felix.getExportedPackages(bundle);
     }
 
     public Bundle[] getFragments(Bundle bundle)

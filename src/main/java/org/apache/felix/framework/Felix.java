@@ -3564,7 +3564,7 @@ public class Felix extends BundleImpl implements Framework
             BundleRevision.PACKAGE_NAMESPACE,
             Collections.EMPTY_MAP,
             attrs);
-        List<BundleCapability> exports = m_resolver.findProviders(req, false);
+        Set<BundleCapability> exports = m_resolver.getCandidates(req, false);
 
         // We only want resolved capabilities.
         for (Iterator<BundleCapability> it = exports.iterator(); it.hasNext(); )
@@ -3891,16 +3891,11 @@ public class Felix extends BundleImpl implements Framework
             bundles = new HashSet<Bundle>();
             for (Bundle target : newTargets)
             {
-                // If anyone passes in a null bundle, then just
-                // ignore it.
-                if (target != null)
-                {
-                    // Add the current target bundle to the map of
-                    // bundles to be refreshed.
-                    bundles.add(target);
-                    // Add all importing bundles to map.
-                    populateDependentGraph((BundleImpl) target, bundles);
-                }
+                // Add the current target bundle to the map of
+                // bundles to be refreshed.
+                bundles.add(target);
+                // Add all importing bundles to map.
+                populateDependentGraph((BundleImpl) target, bundles);
             }
         }
 

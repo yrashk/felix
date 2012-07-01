@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 import org.apache.felix.framework.cache.Content;
 import org.apache.felix.framework.cache.JarContent;
 import org.apache.felix.framework.capabilityset.SimpleFilter;
@@ -47,7 +48,6 @@ import org.apache.felix.framework.resolver.ResolveException;
 import org.apache.felix.framework.resolver.ResourceNotFoundException;
 import org.apache.felix.framework.util.CompoundEnumeration;
 import org.apache.felix.framework.util.FelixConstants;
-import org.apache.felix.framework.util.ImmutableList;
 import org.apache.felix.framework.util.SecurityManagerEx;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.framework.util.manifestparser.ManifestParser;
@@ -68,9 +68,6 @@ import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
-import org.osgi.resource.Capability;
-import org.osgi.resource.Requirement;
-import org.osgi.resource.Wire;
 
 public class BundleWiringImpl implements BundleWiring
 {
@@ -164,7 +161,7 @@ public class BundleWiringImpl implements BundleWiring
         m_revision = revision;
         m_importedPkgs = importedPkgs;
         m_requiredPkgs = requiredPkgs;
-        m_wires = ImmutableList.newInstance(wires);
+        m_wires = Collections.unmodifiableList(wires);
 
         // We need to sort the fragments and add ourself as a dependent of each one.
         // We also need to create an array of fragment contents to attach to our
@@ -249,7 +246,7 @@ public class BundleWiringImpl implements BundleWiring
                 }
             }
         }
-        m_resolvedReqs = ImmutableList.newInstance(reqList);
+        m_resolvedReqs = Collections.unmodifiableList(reqList);
 
         // Calculate resolved list of capabilities, which includes:
         // 1. All capabilities from host and any fragments except for exported
@@ -375,7 +372,7 @@ public class BundleWiringImpl implements BundleWiring
             }
         }
 
-        m_resolvedCaps = ImmutableList.newInstance(capList);
+        m_resolvedCaps = Collections.unmodifiableList(capList);
         m_includedPkgFilters = (includedPkgFilters.isEmpty())
             ? Collections.EMPTY_MAP : includedPkgFilters;
         m_excludedPkgFilters = (excludedPkgFilters.isEmpty())
@@ -403,7 +400,7 @@ public class BundleWiringImpl implements BundleWiring
         // could not be found when resolving the bundle.
         m_resolvedNativeLibs = (libList.isEmpty())
             ? null
-            : ImmutableList.newInstance(libList);
+            : Collections.unmodifiableList(libList);
 
         ClassLoader bootLoader = m_defBootClassLoader;
         if (revision.getBundle().getBundleId() != 0)
@@ -450,12 +447,6 @@ public class BundleWiringImpl implements BundleWiring
         return filters;
     }
 
-    @Override
-    public String toString()
-    {
-        return m_revision.getBundle().toString();
-    }
-
     public synchronized void dispose()
     {
         if (m_fragmentContents != null)
@@ -499,11 +490,6 @@ public class BundleWiringImpl implements BundleWiring
         return !m_isDisposed;
     }
 
-    public List<Capability> getResourceCapabilities(String namespace)
-    {
-        return BundleRevisionImpl.asCapabilityList(getCapabilities(namespace));
-    }
-
     public List<BundleCapability> getCapabilities(String namespace)
     {
         if (isInUse())
@@ -523,11 +509,6 @@ public class BundleWiringImpl implements BundleWiring
             return result;
         }
         return null;
-    }
-
-    public List<Requirement> getResourceRequirements(String namespace)
-    {
-        return BundleRevisionImpl.asRequirementList(getRequirements(namespace));
     }
 
     public List<BundleRequirement> getRequirements(String namespace)
@@ -566,16 +547,6 @@ public class BundleWiringImpl implements BundleWiring
         return m_resolvedNativeLibs;
     }
 
-    private static List<Wire> asWireList(List wires)
-    {
-        return (List<Wire>) wires;
-    }
-
-    public List<Wire> getProvidedResourceWires(String namespace)
-    {
-        return asWireList(getProvidedWires(namespace));
-    }
-
     public List<BundleWire> getProvidedWires(String namespace)
     {
         if (isInUse())
@@ -584,11 +555,6 @@ public class BundleWiringImpl implements BundleWiring
                 .getFramework().getDependencies().getProvidedWires(m_revision, namespace);
         }
         return null;
-    }
-
-    public List<Wire> getRequiredResourceWires(String namespace)
-    {
-        return asWireList(getRequiredWires(namespace));
     }
 
     public List<BundleWire> getRequiredWires(String namespace)
@@ -627,13 +593,8 @@ public class BundleWiringImpl implements BundleWiring
         // Technically, there is a window here where readers won't see
         // both values updates at the same time, but it seems unlikely
         // to cause any issues.
-        m_wires = ImmutableList.newInstance(wires);
+        m_wires = Collections.unmodifiableList(wires);
         m_importedPkgs = importedPkgs;
-    }
-
-    public BundleRevision getResource()
-    {
-        return null;
     }
 
     public BundleRevision getRevision()
@@ -706,7 +667,7 @@ public class BundleWiringImpl implements BundleWiring
                 {
                     entries.add(e.nextElement());
                 }
-                return ImmutableList.newInstance(entries);
+                return Collections.unmodifiableList(entries);
             }
             return Collections.EMPTY_LIST;
         }
@@ -1967,7 +1928,7 @@ public class BundleWiringImpl implements BundleWiring
                                 {
                                     try
                                     {
-                                        BundleRevisionImpl.getSecureAction()
+                                        m_revision.getSecureAction()
                                             .invokeWeavingHook(wh, wci);
                                     }
                                     catch (Throwable th)
@@ -2203,26 +2164,19 @@ public class BundleWiringImpl implements BundleWiring
                         && (deferredList.size() > 0)
                         && ((Object[]) deferredList.get(0))[0].equals(name))
                     {
-                        // Null the deferred list.
-                        m_deferredActivation.set(null);
-                        while (!deferredList.isEmpty())
+                        for (int i = deferredList.size() - 1; i >= 0; i--)
                         {
-                            // Lazy bundles should be activated in the reverse order
-                            // of when they were added to the deferred list, so grab
-                            // them from the end of the deferred list.
-                            Object[] lazy = (Object[]) deferredList.remove(deferredList.size() - 1);
                             try
                             {
-                                felix.getFramework().activateBundle((BundleImpl) (lazy)[1], true);
+                                felix.getFramework().activateBundle(
+                                    (BundleImpl) ((Object[]) deferredList.get(i))[1], true);
                             }
-                            catch (Throwable ex)
+                            catch (BundleException ex)
                             {
-                                m_logger.log((BundleImpl) (lazy)[1],
-                                    Logger.LOG_WARNING,
-                                    "Unable to lazily start bundle.",
-                                    ex);
+                                ex.printStackTrace();
                             }
                         }
+                        deferredList.clear();
                     }
                 }
             }
@@ -2573,7 +2527,7 @@ public class BundleWiringImpl implements BundleWiring
                 BundleRevision.PACKAGE_NAMESPACE, (Object) pkgName);
             BundleRequirementImpl req = new BundleRequirementImpl(
                 revision, BundleRevision.PACKAGE_NAMESPACE, dirs, attrs);
-            List<BundleCapability> exporters = resolver.findProviders(req, false);
+            Set<BundleCapability> exporters = resolver.getCandidates(req, false);
 
             BundleRevision provider = null;
             try
@@ -2612,7 +2566,7 @@ public class BundleWiringImpl implements BundleWiring
             BundleRevision.PACKAGE_NAMESPACE, (Object) pkgName);
         BundleRequirementImpl req = new BundleRequirementImpl(
             revision, BundleRevision.PACKAGE_NAMESPACE, dirs, attrs);
-        List<BundleCapability> exports = resolver.findProviders(req, false);
+        Set<BundleCapability> exports = resolver.getCandidates(req, false);
         if (exports.size() > 0)
         {
             boolean classpath = false;
