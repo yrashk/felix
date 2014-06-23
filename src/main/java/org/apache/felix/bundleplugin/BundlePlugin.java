@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -99,6 +98,13 @@ public class BundlePlugin extends AbstractMojo
      * @parameter expression="${manifestLocation}" default-value="${project.build.outputDirectory}/META-INF"
      */
     protected File manifestLocation;
+
+    /**
+     * Output a nicely formatted manifest that still respects the 72 character line limit.
+     *
+     * @parameter expression="${niceManifest}" default-value="false"
+     */
+    protected boolean niceManifest;
 
     /**
      * File where the BND instructions will be dumped
@@ -224,13 +230,6 @@ public class BundlePlugin extends AbstractMojo
      * @readonly
      */
     private MavenSession m_mavenSession;
-
-    /**
-     * Output a nicely formatted manifest that still respects the 72 character line limit.
-     *
-     * @parameter
-     */
-    private boolean niceManifest = false;
 
     private static final String MAVEN_SYMBOLICNAME = "maven-symbolicname";
     private static final String MAVEN_RESOURCES = "{maven-resources}";
@@ -430,15 +429,7 @@ public class BundlePlugin extends AbstractMojo
                 try
                 {
                     Manifest manifest = builder.getJar().getManifest();
-                    FileOutputStream fos = new FileOutputStream( outputFile );
-                    try
-                    {
-                        ManifestWriter.outputManifest( manifest, fos, niceManifest );
-                    }
-                    finally
-                    {
-                        fos.close();
-                    }
+                    ManifestPlugin.writeManifest( manifest, outputFile, niceManifest );
                 }
                 catch ( IOException e )
                 {
@@ -679,13 +670,13 @@ public class BundlePlugin extends AbstractMojo
     }
 
 
-    protected StringBuilder dumpManifest( Manifest manifest, StringBuilder buf )
+    protected static StringBuilder dumpManifest( Manifest manifest, StringBuilder buf )
     {
         try
         {
             buf.append( "#-----------------------------------------------------------------------" + NL );
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ManifestWriter.outputManifest( manifest, out, false ); // manifest encoding is UTF8
+            ManifestWriter.outputManifest( manifest, out, true ); // manifest encoding is UTF8
             buf.append( out.toString( "UTF8" ) );
             buf.append( "#-----------------------------------------------------------------------" + NL );
         }
