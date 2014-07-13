@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.felix</groupId>
         <artifactId>felix-parent</artifactId>
-        <version>2.1</version>
+        <version>1.2.0</version>
         <relativePath>../../pom/pom.xml</relativePath>
     </parent>
     <properties>
@@ -30,13 +30,13 @@
     </properties>
     <name>Apache Felix Dependency Manager</name>
     <artifactId>org.apache.felix.dependencymanager</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>3.2.0</version>
     <packaging>bundle</packaging>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/felix/trunk/dependencymanager/core</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/felix/trunk/dependencymanager/core</developerConnection>
-        <url>http://svn.apache.org/repos/asf/felix/dependencymanager/core</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.dependencymanager-3.2.0</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.dependencymanager-3.2.0</developerConnection>
+        <url>scm:svn:https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.dependencymanager-3.2.0</url>
     </scm>
 
     <dependencies>
@@ -69,7 +69,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.5.0</version>
+                    <version>2.3.4</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
@@ -92,7 +92,7 @@
                         <Bundle-Name>Apache Felix Dependency Manager</Bundle-Name>
                         <Bundle-Description>Provides dynamic service and component dependency management.</Bundle-Description>
                         <Bundle-Vendor>The Apache Software Foundation</Bundle-Vendor>
-                        <Export-Package>org.apache.felix.dm;version="3.0.0";provide:=true,org.apache.felix.dm.tracker;version="3.1.0";provide:=true</Export-Package>
+                        <Export-Package>org.apache.felix.dm;version="3.1.0";provide:=true,org.apache.felix.dm.tracker;version="3.1.0";provide:=true</Export-Package>
                         <Import-Package>*</Import-Package>
                         <Private-Package>org.apache.felix.dm.impl, org.apache.felix.dm.impl.*</Private-Package>
                         <!-- Uncomment this next line to include source code in the bundle.
